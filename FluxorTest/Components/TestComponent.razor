@@ -1,0 +1,34 @@
+﻿@using Fluxor
+@namespace FluxorTest.Components
+@typeparam TState where TState : FluxorTest.Models.GenericListState<TItem>
+@typeparam TItem where TItem : FluxorTest.Models.IIdentifiedObject, FluxorTest.Models.INamedObject
+@typeparam TRetrieveDataAction where TRetrieveDataAction : new()
+@inject IDispatcher Dispatcher
+@inject IState<TState> ItemListState
+
+@if (!ItemListState.Value.Initialized || ItemListState.Value.Loading)
+{
+    <h1>No state yet available</h1>
+}
+@if (ItemListState.Value.Loading)
+{
+    <h1>Loading data!</h1>
+}
+else
+{
+    foreach (var val in ItemListState.Value.Items)
+    {
+        <h3>@val</h3>
+    }
+}
+
+@code
+{
+    protected override void OnInitialized()
+    {
+        if (!ItemListState.Value.Initialized)
+        {
+            Dispatcher.Dispatch(new TRetrieveDataAction());
+        }
+    }
+}
